@@ -1,18 +1,13 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from "vue-router";
+import useAuth from "@/composables/useAuth";
+
+const auth = useAuth();
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <main>
+    <h1>Home</h1>
+    <p>User: {{ auth.user }}</p>
+    <p>Access token: {{ auth.access_token }}</p>
+  </main>
 </template>
-
-<style scoped></style>
