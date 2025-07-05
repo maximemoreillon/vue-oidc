@@ -1,5 +1,5 @@
 import type { App } from "vue";
-import useAuth from "@/composables/useAuth";
+import useAuth from "../composables/useAuth";
 import OidcClient from "@moreillon/oidc-auth";
 
 let oidcClient: OidcClient;
