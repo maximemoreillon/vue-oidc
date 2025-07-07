@@ -1,33 +1,41 @@
-# vue-oidc
+# Vue OIDC
 
-This template should help get you started developing with Vue 3 in Vite.
+## Usage example
 
-## Recommended IDE Setup
+```ts
+import { createApp } from "vue";
+import { createPinia } from "pinia";
+import { auth } from "@moreillon/vue-oidc";
+import App from "./App.vue";
+import router from "./router";
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+const app = createApp(App);
 
-## Type Support for `.vue` Imports in TS
+const { VITE_OIDC_AUTHORITY, VITE_OIDC_CLIENT_ID } = import.meta.env;
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+app.use(auth, {
+  authority: VITE_OIDC_AUTHORITY,
+  client_id: VITE_OIDC_CLIENT_ID,
+});
+app.use(createPinia());
+app.use(router);
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
+app.mount("#app");
 ```
 
-### Compile and Hot-Reload for Development
+Then in your components:
 
-```sh
-npm run dev
-```
+```vue
+<script setup lang="ts">
+import { useAuth } from "@moreillon/vue-oidc";
 
-### Type-Check, Compile and Minify for Production
+const { user } = useAuth();
+</script>
 
-```sh
-npm run build
+<template>
+  <h1>User</h1>
+  <p>
+    {{ user }}
+  </p>
+</template>
 ```
