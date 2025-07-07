@@ -7,12 +7,12 @@ const access_token = ref<string | null>(null);
 
 function login() {
   if (!client.value) throw new Error("OIDC Client not instanciated");
-  return client.value.login;
+  client.value.login();
 }
 
 function logout() {
   if (!client.value) throw new Error("OIDC Client not instanciated");
-  return client.value.logout;
+  client.value.logout();
 }
 
 export default function () {
