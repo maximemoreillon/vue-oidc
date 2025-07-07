@@ -7,15 +7,17 @@ export type Options = {
   client_id: string;
   extraQueryParams?: { [key: string]: string };
   redirect_uri?: string;
+  enforce?: boolean;
 };
 
 let oidcClient: OidcClient;
 
 export default {
   async install(app: App, options: Options) {
+    const { enforce, ...oidcOptions } = options;
     const auth = useAuth();
-    oidcClient = new OidcClient(options);
-    const oidcData = await oidcClient.init();
+    oidcClient = new OidcClient(oidcOptions);
+    const oidcData = await oidcClient.init(enforce);
 
     if (!oidcData) return;
 
