@@ -17,8 +17,8 @@ export default {
 
     auth.client.value = new OidcClient(oidcOptions);
     const oidcData = await auth.client.value.init(enforce);
-    auth.ready.value = true;
 
+    if (!enforce || oidcData) auth.ready.value = true;
     if (!oidcData) return;
 
     const {
