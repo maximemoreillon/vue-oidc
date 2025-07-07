@@ -10,14 +10,13 @@ export type Options = {
   enforce?: boolean;
 };
 
-let oidcClient: OidcClient;
-
 export default {
   async install(app: App, options: Options) {
     const { enforce, ...oidcOptions } = options;
     const auth = useAuth();
-    oidcClient = new OidcClient(oidcOptions);
-    const oidcData = await oidcClient.init(enforce);
+
+    auth.client.value = new OidcClient(oidcOptions);
+    const oidcData = await auth.client.value.init(enforce);
 
     if (!oidcData) return;
 
@@ -29,7 +28,7 @@ export default {
     auth.user.value = user;
     auth.access_token.value = access_token;
 
-    oidcClient.onTokenRefreshed(({ access_token }) => {
+    auth.client.value.onTokenRefreshed(({ access_token }) => {
       auth.access_token.value = access_token;
     });
   },
