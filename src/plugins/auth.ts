@@ -26,8 +26,8 @@ export default {
       tokens: { access_token },
     } = oidcData;
 
-    auth.user.value = user;
     auth.access_token.value = access_token;
+    auth.user.value = user;
 
     auth.client.value.onTokenRefreshed(({ access_token }) => {
       auth.access_token.value = access_token;
