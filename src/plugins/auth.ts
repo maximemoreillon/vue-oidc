@@ -1,36 +1,44 @@
 import type { App } from "vue";
-import useAuth from "../composables/useAuth";
 import OidcClient from "@moreillon/oidc-auth";
+import type { UserProvidedOptions } from "@moreillon/oidc-auth";
+import { resetState, state } from "../composables/useAuth.js";
 
-export type Options = {
-  authority: string;
-  client_id: string;
-  extraQueryParams?: { [key: string]: string };
-  redirect_uri?: string;
+export type Options = UserProvidedOptions & {
   enforce?: boolean;
 };
 
+async function init(options: Options) {
+  const { enforce, ...oidcOptions } = options;
+
+  resetState();
+
+  try {
+    const client = new OidcClient(oidcOptions);
+    state.client.value = client;
+
+    const oidcData = await client.init(enforce);
+
+    if (oidcData) {
+      state.access_token.value = oidcData.tokens.access_token;
+      state.user.value = oidcData.user;
+
+      client.onTokenRefreshed(({ access_token }) => {
+        state.access_token.value = access_token;
+      });
+    }
+
+    // When enforced without data, the user is being redirected to the provider
+    if (!enforce || oidcData) state.ready.value = true;
+  } catch (error) {
+    state.error.value = error;
+    state.ready.value = true;
+  }
+}
+
 export default {
-  async install(app: App, options: Options) {
-    const { enforce, ...oidcOptions } = options;
-    const auth = useAuth();
-
-    auth.client.value = new OidcClient(oidcOptions);
-    const oidcData = await auth.client.value.init(enforce);
-
-    if (!enforce || oidcData) auth.ready.value = true;
-    if (!oidcData) return;
-
-    const {
-      user,
-      tokens: { access_token },
-    } = oidcData;
-
-    auth.access_token.value = access_token;
-    auth.user.value = user;
-
-    auth.client.value.onTokenRefreshed(({ access_token }) => {
-      auth.access_token.value = access_token;
-    });
+  // Vue does not await plugin installation: returned promise is for tests / callers
+  // who want to wait. Apps should rely on the `ready` ref from useAuth().
+  install(_app: App, options: Options) {
+    return init(options);
   },
 };
