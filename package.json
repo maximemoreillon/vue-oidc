@@ -21,7 +21,7 @@
     "vue": "^3.5.0"
   },
   "dependencies": {
-    "@moreillon/oidc-auth": "^3.0.6"
+    "@moreillon/oidc-auth": "^4.0.0"
   },
   "devDependencies": {
     "typescript": "~5.8.0",

@@ -66,12 +66,14 @@ All refs are read-only.
 | Property       | Type                              | Description                                                                 |
 | -------------- | --------------------------------- | --------------------------------------------------------------------------- |
 | `ready`        | `Ref<boolean>`                    | `true` once initialization has finished (successfully or not)               |
-| `error`        | `Ref<unknown>`                    | Error thrown during initialization, if any                                  |
-| `user`         | `Ref<User \| null>`               | User info of the authenticated user                                         |
+| `error`        | `Ref<unknown>`                    | Error during initialization (e.g. provider unreachable, login cancelled) or when the session could not be renewed. Cleared on the next successful refresh |
+| `user`         | `Ref<User \| null>`               | User info of the authenticated user. Cleared when the user logs out in another tab or the provider rejects the session |
 | `access_token` | `Ref<string \| null>`             | Current access token, kept up to date on refresh                            |
 | `client`       | `Ref<OidcClient \| null>`         | Underlying `@moreillon/oidc-auth` client                                    |
 | `login()`      | `() => void`                      | Redirect to the provider's login page                                       |
 | `logout()`     | `() => void`                      | Log out at the provider                                                     |
+
+`error.value instanceof TokenRejectedError` (exported by this package) tells a session rejected by the provider apart from network or server errors.
 
 `useAuth` accepts a type parameter for custom claims: `useAuth<MyUser>()`.
 

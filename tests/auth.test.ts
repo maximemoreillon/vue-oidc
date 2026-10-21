@@ -7,12 +7,15 @@ const mocks = vi.hoisted(() => ({
   login: vi.fn(),
   logout: vi.fn(),
   onTokenRefreshed: vi.fn(),
+  onRefreshError: vi.fn(),
+  onLogout: vi.fn(),
 }));
 
 vi.mock("@moreillon/oidc-auth", () => ({
   default: vi.fn(function () {
     return mocks;
   }),
+  TokenRejectedError: class extends Error {},
 }));
 
 const options = { authority: "https://idp.example.com", client_id: "app" };
@@ -82,6 +85,32 @@ describe("auth plugin", () => {
     const [handler] = mocks.onTokenRefreshed.mock.calls[0];
     handler({ access_token: "token-2" });
     expect(useAuth().access_token.value).toBe("token-2");
+  });
+
+  it("exposes refresh errors and clears them on the next refresh", async () => {
+    mocks.init.mockResolvedValue(oidcData);
+    await install();
+
+    const failure = new Error("invalid_grant");
+    const [onError] = mocks.onRefreshError.mock.calls[0];
+    onError(failure);
+    expect(useAuth().error.value).toBe(failure);
+
+    const [onRefreshed] = mocks.onTokenRefreshed.mock.calls[0];
+    onRefreshed({ access_token: "token-2" });
+    expect(useAuth().error.value).toBeNull();
+  });
+
+  it("clears the user when the session ends outside of this tab", async () => {
+    mocks.init.mockResolvedValue(oidcData);
+    await install();
+
+    const [onLogout] = mocks.onLogout.mock.calls[0];
+    onLogout();
+
+    const { user, access_token } = useAuth();
+    expect(user.value).toBeNull();
+    expect(access_token.value).toBeNull();
   });
 
   it("delegates login and logout to the client", async () => {

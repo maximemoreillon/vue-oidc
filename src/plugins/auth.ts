@@ -22,8 +22,20 @@ async function init(options: Options) {
       state.access_token.value = oidcData.tokens.access_token;
       state.user.value = oidcData.user;
 
+      // Also fired when another tab refreshed the tokens
       client.onTokenRefreshed(({ access_token }) => {
         state.access_token.value = access_token;
+        state.error.value = null;
+      });
+
+      client.onRefreshError((error) => {
+        state.error.value = error;
+      });
+
+      // Logged out in another tab, or tokens rejected by the provider
+      client.onLogout(() => {
+        state.user.value = null;
+        state.access_token.value = null;
       });
     }
 
