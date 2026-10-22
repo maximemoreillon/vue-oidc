@@ -1,6 +1,6 @@
 # Vue OIDC
 
-Vue 3 plugin and composable for OpenID Connect authentication, built on [@moreillon/oidc-auth](https://www.npmjs.com/package/@moreillon/oidc-auth).
+Vue 3 plugin and composable for OpenID Connect authentication, built on [@moreillon/oidc-auth](https://www.npmjs.com/package/@moreillon/oidc-auth). The main purpose of this module is to provide OIDC authentication to Vue.js apps served over plain HTTP, where crypto library cannot be used.
 
 ## Installation
 
@@ -29,12 +29,12 @@ createApp(App)
 
 ### Options
 
-| Option             | Type                     | Description                                                                      |
-| ------------------ | ------------------------ | -------------------------------------------------------------------------------- |
-| `authority`        | `string`                 | URL of the OIDC provider (required)                                              |
-| `client_id`        | `string`                 | OIDC client ID (required)                                                        |
-| `redirect_uri`     | `string`                 | Where the provider redirects after login. Defaults to the current page           |
-| `extraQueryParams` | `Record<string, string>` | Additional query parameters sent to the authorization endpoint                   |
+| Option             | Type                     | Description                                                                                       |
+| ------------------ | ------------------------ | ------------------------------------------------------------------------------------------------- |
+| `authority`        | `string`                 | URL of the OIDC provider (required)                                                               |
+| `client_id`        | `string`                 | OIDC client ID (required)                                                                         |
+| `redirect_uri`     | `string`                 | Where the provider redirects after login. Defaults to the current page                            |
+| `extraQueryParams` | `Record<string, string>` | Additional query parameters sent to the authorization endpoint                                    |
 | `enforce`          | `boolean`                | Redirect unauthenticated users to the provider immediately instead of letting them in anonymously |
 
 ## Usage
@@ -63,15 +63,15 @@ const { ready, error, user, login, logout } = useAuth();
 
 All refs are read-only.
 
-| Property       | Type                              | Description                                                                 |
-| -------------- | --------------------------------- | --------------------------------------------------------------------------- |
-| `ready`        | `Ref<boolean>`                    | `true` once initialization has finished (successfully or not)               |
-| `error`        | `Ref<unknown>`                    | Error during initialization (e.g. provider unreachable, login cancelled) or when the session could not be renewed. Cleared on the next successful refresh |
-| `user`         | `Ref<User \| null>`               | User info of the authenticated user. Cleared when the user logs out in another tab or the provider rejects the session |
-| `access_token` | `Ref<string \| null>`             | Current access token, kept up to date on refresh                            |
-| `client`       | `Ref<OidcClient \| null>`         | Underlying `@moreillon/oidc-auth` client                                    |
-| `login()`      | `() => void`                      | Redirect to the provider's login page                                       |
-| `logout()`     | `() => void`                      | Log out at the provider                                                     |
+| Property       | Type                      | Description                                                                                                                                               |
+| -------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ready`        | `Ref<boolean>`            | `true` once initialization has finished (successfully or not)                                                                                             |
+| `error`        | `Ref<unknown>`            | Error during initialization (e.g. provider unreachable, login cancelled) or when the session could not be renewed. Cleared on the next successful refresh |
+| `user`         | `Ref<User \| null>`       | User info of the authenticated user. Cleared when the user logs out in another tab or the provider rejects the session                                    |
+| `access_token` | `Ref<string \| null>`     | Current access token, kept up to date on refresh                                                                                                          |
+| `client`       | `Ref<OidcClient \| null>` | Underlying `@moreillon/oidc-auth` client                                                                                                                  |
+| `login()`      | `() => void`              | Redirect to the provider's login page                                                                                                                     |
+| `logout()`     | `() => void`              | Log out at the provider                                                                                                                                   |
 
 `error.value instanceof TokenRejectedError` (exported by this package) tells a session rejected by the provider apart from network or server errors.
 
