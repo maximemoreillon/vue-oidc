@@ -1,6 +1,10 @@
 {
   "name": "@moreillon/vue-oidc",
   "version": "0.2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maximemoreillon/vue-oidc.git"
+  },
   "type": "module",
   "files": [
     "dist"
