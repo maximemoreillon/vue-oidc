@@ -1,6 +1,20 @@
 # Vue OIDC
 
-Vue 3 plugin and composable for OpenID Connect authentication, built on [@moreillon/oidc-auth](https://www.npmjs.com/package/@moreillon/oidc-auth). The main purpose of this module is to provide OIDC authentication to Vue.js apps served over plain HTTP, where crypto library cannot be used.
+Vue 3 plugin and composable for OpenID Connect authentication (authorization code flow with PKCE), built on [@moreillon/oidc-auth](https://www.npmjs.com/package/@moreillon/oidc-auth).
+
+## Why this package exists
+
+This package exists to cover Vue apps **served over plain HTTP**, for example on a local network or behind a reverse proxy that doesn't terminate TLS. Browsers only expose `crypto.subtle` on HTTPS pages and `localhost`, so mainstream OIDC clients that rely on it to compute the PKCE challenge fail on such pages. The underlying [@moreillon/oidc-auth](https://www.npmjs.com/package/@moreillon/oidc-auth) client computes it without `crypto.subtle`.
+
+If your app is served over HTTPS, a well-established client such as [oidc-client-ts](https://github.com/authts/oidc-client-ts) is a better fit.
+
+## Related packages
+
+| Package                                                                    | For                                     |
+| -------------------------------------------------------------------------- | --------------------------------------- |
+| [@moreillon/vue-oidc](https://www.npmjs.com/package/@moreillon/vue-oidc)   | Vue 3 single-page apps (this package)   |
+| [@moreillon/oidc-auth](https://www.npmjs.com/package/@moreillon/oidc-auth) | Any browser app, framework-agnostic     |
+| [@moreillon/nuxt-oidc](https://www.npmjs.com/package/@moreillon/nuxt-oidc) | Nuxt apps                               |
 
 ## Installation
 
@@ -33,9 +47,11 @@ createApp(App)
 | ------------------ | ------------------------ | ------------------------------------------------------------------------------------------------- |
 | `authority`        | `string`                 | URL of the OIDC provider (required)                                                               |
 | `client_id`        | `string`                 | OIDC client ID (required)                                                                         |
-| `redirect_uri`     | `string`                 | Where the provider redirects after login. Defaults to the current page                            |
+| `redirect_uri`     | `string`                 | Where the provider redirects after login. Defaults to the origin of the current page              |
 | `extraQueryParams` | `Record<string, string>` | Additional query parameters sent to the authorization endpoint                                    |
-| `enforce`          | `boolean`                | Redirect unauthenticated users to the provider immediately instead of letting them in anonymously |
+| `enforce`          | `boolean`                | Redirect unauthenticated users to the provider immediately instead of letting them in anonymously. Defaults to `true` |
+
+At the provider, register a public client (no client secret) with your `redirect_uri` as redirect URI.
 
 ## Usage
 
